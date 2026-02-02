@@ -1,21 +1,30 @@
-"use client"
-
 import Image from "next/image"
 import Link from "next/link"
-import { useParams } from "next/navigation"
 import { ArrowLeft, Check, Truck, Shield, RefreshCw } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { ProductCard } from "@/components/product-card"
 import { ContactRevealButton } from "@/components/contact-reveal"
-import { getProductById, getProductsByCategory, categoryInfo } from "@/lib/products"
+import { getProductById, getProductsByCategory, categoryInfo, products } from "@/lib/products"
 
 type CategoryKey = keyof typeof categoryInfo
 
-export default function ProductPage() {
-  const params = useParams()
-  const category = params.category as string
-  const id = params.id as string
+export async function generateStaticParams() {
+  const params: { category: string; id: string }[] = []
+  
+  for (const product of products) {
+    params.push({
+      category: product.category,
+      id: product.id
+    })
+  }
+  
+  return params
+}
+
+export default function ProductPage({ params }: { params: { category: string; id: string } }) {
+  const category = params.category
+  const id = params.id
   
   const product = getProductById(id)
   
